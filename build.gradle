@@ -1,0 +1,51 @@
+plugins {
+    id('java')
+}
+
+defaultTasks('build')
+
+subprojects {
+    apply(plugin: 'java')
+
+    group = 'dev.neuralnexus'
+    version = '1.0.0-SNAPSHOT'
+ 
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenCentral()
+
+        // Bukkit/Bungee
+//        maven {
+//            name = "spigotmc-repo"
+//            url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+//        }
+
+        // Paper/Velocity
+        maven {
+            name = "papermc-repo"
+            url = "https://repo.papermc.io/repository/maven-public/"
+        }
+
+        // NeuralNexus
+        maven {
+            name = "NeuralNexus"
+            url = "https://maven.neuralnexus.dev/releases"
+        }
+
+        // NeuralNexus Snapshots
+        maven {
+            name = "NeuralNexus Snapshots"
+            url = "https://maven.neuralnexus.dev/snapshots"
+        }
+    }
+}
+
+clean {
+    delete "target"
+}
