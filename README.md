@@ -39,9 +39,9 @@ CustomServerManager supports: Velocity
 
 ## Commands and Permissions
 
-| Command                 | Permission    | Description                      |
-|-------------------------|---------------|----------------------------------|
-| `/csm <version/reload>` | `csm.command` | Root CustomServerManager Command |
+| Command                                 | Permission                    | Description                      |
+|-----------------------------------------|-------------------------------|----------------------------------|
+| `/customservermanager <version/reload>` | `customservermanager.command` | Root CustomServerManager Command |
 
 ## TODO
 

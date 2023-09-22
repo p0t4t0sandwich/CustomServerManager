@@ -53,5 +53,6 @@ pluginManagement {
 rootProject.name = 'CustomServerManager'
 
 include(
+        'common',
         'velocity'
 )
