@@ -2,5 +2,5 @@
     "AMP_API_URL": "",
     "AMP_API_USERNAME": "",
     "AMP_API_PASSWORD": "",
-    "AMP_SERVERS": []
+    "AMP_SERVERS": {}
 }

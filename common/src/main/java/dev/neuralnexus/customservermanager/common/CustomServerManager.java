@@ -1,25 +1,34 @@
 package dev.neuralnexus.customservermanager.common;
 
+import dev.neuralnexus.ampapi.AMPAPI;
+import dev.neuralnexus.ampapi.modules.ADS;
+import dev.neuralnexus.ampapi.types.IADSInstance;
+import dev.neuralnexus.ampapi.types.Instance;
+import dev.neuralnexus.ampapi.types.Result;
 import dev.neuralnexus.customservermanager.common.api.CustomServerManagerAPIProvider;
+import dev.neuralnexus.customservermanager.common.config.Config;
 import dev.neuralnexus.taterlib.common.TaterLib;
+import dev.neuralnexus.taterlib.common.Utils;
 import dev.neuralnexus.taterlib.common.abstractions.logger.AbstractLogger;
-import dev.neuralnexus.taterlib.lib.dejvokep.boostedyaml.YamlDocument;
+import dev.neuralnexus.taterlib.lib.gson.Gson;
+import dev.neuralnexus.taterlib.lib.gson.GsonBuilder;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Main class for the CustomServerManager plugin.
  */
 public class CustomServerManager {
     private static final CustomServerManager instance = new CustomServerManager();
-    private static YamlDocument config;
+    private static Config config;
     private static String configPath;
     private static AbstractLogger logger;
     private static boolean STARTED = false;
     private static final ArrayList<Object> hooks = new ArrayList<>();
+    private static final HashMap<String, AMPAPI> apiHandlers = new HashMap<>();
 
     /**
      * Constructor for the CustomServerManager class.
@@ -61,10 +70,10 @@ public class CustomServerManager {
 
         // Config
         try {
-            config = YamlDocument.create(new File("." + File.separator + configPath + File.separator + "CustomServerManager", "CustomServerManager.config.yml"),
-                    Objects.requireNonNull(CustomServerManager.class.getClassLoader().getResourceAsStream("CustomServerManager.config.yml"))
-            );
-            config.reload();
+            Gson gson = new GsonBuilder().create();
+            File configFile = new File("." + File.separator + configPath + File.separator + "CustomServerManager", "customservermanager.config.yml");
+            Reader reader = new FileReader(configFile);
+            config = gson.fromJson(reader, Config.class);
         } catch (IOException | NullPointerException e) {
             useLogger("Failed to load CustomServerManager.config.yml!\n" + e.getMessage());
             e.printStackTrace();
@@ -75,6 +84,27 @@ public class CustomServerManager {
             return;
         }
         STARTED = true;
+
+        // Start AMP API
+        useLogger("Starting AMP API...");
+        Utils.runTaskAsync(() -> {
+            try {
+                ADS API = new ADS(config.AMP_API_URL, config.AMP_API_USERNAME, config.AMP_API_PASSWORD, "", "");
+                apiHandlers.put("ADS", API);
+
+                List<IADSInstance> targets = API.ADSModule.GetInstances().result;
+                for (IADSInstance target : targets) {
+                    Instance[] instances = target.AvailableInstances;
+                    for (Instance instance : instances) {
+                        if (config.AMP_API_SERVERS.containsKey(instance.InstanceName)) {
+                            apiHandlers.put(instance.InstanceName, API.InstanceLogin(instance.InstanceID));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                useLogger(e.getMessage());
+            }
+        });
 
         // Register player listeners
 

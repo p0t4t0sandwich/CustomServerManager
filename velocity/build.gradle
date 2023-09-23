@@ -11,17 +11,12 @@ dependencies {
 
     // TaterLib
     compileOnly("dev.neuralnexus:TaterLib:1.20-${taterlib_version}")
-
-    // AMP API
-    implementation("dev.neuralnexus:ampapi:${ampapi_version}")
 }
 
 shadowJar {
     dependencies {
         include(project(":common"))
-        include(dependency("dev.neuralnexus:ampapi:${ampapi_version}"))
     }
-    relocate("dev.neuralnexus.ampapi", "dev.neuralnexus.customservermanager.libs.ampapi")
 
     destinationDirectory = file('../target')
     archiveFileName = "${project_name}-velocity-${version}.jar"

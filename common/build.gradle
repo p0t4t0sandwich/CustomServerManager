@@ -6,29 +6,15 @@ dependencies {
     // TaterLib
     compileOnly("dev.neuralnexus:TaterLib:1.20-${taterlib_version}")
 
-    // JDA
-    implementation("net.dv8tion:JDA:5.0.0-beta.10") {
-        exclude(module: "opus-java")
-    }
-
-    // Websocket
-    implementation("com.neovisionaries:nv-websocket-client:2.14")
+    // AMP API
+    implementation("dev.neuralnexus:ampapi:${ampapi_version}")
 }
 
 shadowJar {
-    dependencies {}
-    // JDA
-    relocate("net.dv8tion", "dev.neuralnexus.tatercomms.lib.dv8tion")
-    relocate("org.apache", "dev.neuralnexus.tatercomms.lib.apache")
-    relocate("okhttp3", "dev.neuralnexus.tatercomms.lib.okhttp3")
-    relocate("com.iwebpp", "dev.neuralnexus.tatercomms.lib.iwebpp")
-    relocate("kotlin", "dev.neuralnexus.tatercomms.lib.kotlin")
-    relocate("com.fasterxml.jackson", "dev.neuralnexus.tatercomms.lib.jackson")
-    relocate("gnu.trove", "dev.neuralnexus.tatercomms.lib.trove")
-    relocate("okio", "dev.neuralnexus.tatercomms.lib.okio")
-
-    // Websocket
-    relocate("com.neovisionaries", "dev.neuralnexus.tatercomms.lib.neovisionaries")
+    dependencies {
+        include(dependency("dev.neuralnexus:ampapi:${ampapi_version}"))
+    }
+    relocate("dev.neuralnexus.ampapi", "dev.neuralnexus.customservermanager.libs.ampapi")
 
     destinationDirectory = file('../target')
     archiveFileName = "${project_name}-common-${version}.jar"
